@@ -29,7 +29,32 @@ public class ModelDescriptor {
 	public void setname(String newName) {
 		  this.name=newName;
 		}
-	// all json related functions
+	@Override
+    public boolean equals(Object o)
+    {
+		 //boolean retVal = false;
+		 ModelDescriptor tmp;
+
+        if (o != null && o instanceof ModelDescriptor)
+        {
+        	tmp =  (ModelDescriptor) o;
+            if(this.name.equals(tmp.name) && this.version.equals(tmp.version))
+            return true;
+                   
+        }
+        return false;
+        
+    }
+	@Override public int hashCode() 
+	{ 
+	final int prime = 31; 
+	int result = 1; 
+	result = prime * result + ((name == null) ? 0 : name.hashCode()); 
+	result = prime * result + ((version == null) ? 0 : version.hashCode()); 
+	return result; 
+	}
+
+
 	
 
 }

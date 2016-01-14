@@ -17,15 +17,8 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.io.FileUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.json.JSONException;
-
-
-import com.google.gson.Gson;
-
 import com.google.inject.Inject;
 import com.sun.jersey.api.view.Viewable;
 
@@ -81,7 +74,6 @@ public class ModelService {
 	public Response receiveJSON(String jsonString) throws JSONException, IOException {
 		UO = receivedObject.DeserializeUploadDesc(jsonString);
 		Io.addFile(UO.getModelDesc(), UO.getBytes());
-		Io.tmpadd(UO.getModelDesc(), UO.getBytes());
 		return Response.status(200).entity("File uploaded to : GITHub \n").build();
 		
 	}
@@ -125,49 +117,19 @@ public class ModelService {
 
 	}
 
-	/*
-	 * @DELETE
-	 * 
-	 * @Path("/delete/")
-	 * 
-	 * @Consumes(MediaType.APPLICATION_JSON)
-	 * 
-	 * @Produces(MediaType.APPLICATION_JSON) public void remove(JsonNode json) {
-	 * try {
-	 * 
-	 * System.out.println("DELETE was called"); File file = new
-	 * File(dataFolder.getPath() + "\\" + fileName); boolean filexists =
-	 * file.exists(); if (filexists) { if (file.delete()) {
-	 * System.out.println(file.getName() + " is deleted!"); } else {
-	 * System.out.println("Delete operation is failed."); } } else {
-	 * System.out.println("File does Not exist."); }
-	 * 
-	 * } catch (Exception e) {
-	 * 
-	 * e.printStackTrace();
-	 * 
-	 * }
-	 * 
-	 * }
-	 */
+	
 	@DELETE
 	//@POST
 	@Path("/delete/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	// @Produces(MediaType.APPLICATION_JSON)
-	public Response remove(String jsonString) throws JsonParseException, JsonMappingException, IOException {
+	public Response remove(String jsonString) throws IOException, JSONException {
 		ModelDescriptor delDescriptor = receivedObject.DeserializeModelDesc(jsonString);
-		/*System.out.println("Delete request was received\n");
-		Gson gson = new Gson();
-	
-		ModelDescriptor GModelDecriptorMapper = gson.fromJson(modelString.toString(), ModelDescriptor.class);
-	
-		System.out.println(GModelDecriptorMapper.getname() + "\n");
-		System.out.println(GModelDecriptorMapper.getversion() + "\n");*/
-		System.out.println(delDescriptor.getname() + "\n");
-		System.out.println(delDescriptor.getversion() + "\n");
-		return Response.status(200).entity("File has been deleted").build();
-
+		if (Io.removeFile(delDescriptor))
+			return Response.status(200).entity("File has been deleted").build();
+		else
+			return Response.status(201).entity("File/Index not found!").build();
+		
 	}
 
 	

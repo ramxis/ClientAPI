@@ -76,32 +76,7 @@ public class run_platform {
 		http.setIdleTimeout(30000);
 		server.addConnector(http);
 
-		// === jetty-https.xml ===
-		// SSL Context Factory
-		/*SslContextFactory sslContextFactory = createSslContextFactory();
-
-		// SSL HTTP Configuration
-		HttpConfiguration https_config = new HttpConfiguration(http_config);
-		https_config.addCustomizer(new SecureRequestCustomizer());
-
-		// SSL Connector
-		ServerConnector sslConnector = new ServerConnector(server,
-				new SslConnectionFactory(sslContextFactory, "http/1.1"), new HttpConnectionFactory(https_config));
-		sslConnector.setPort(8443);
-		server.addConnector(sslConnector);
-
-		WebAppContext webAppContext = new WebAppContext();
-		webAppContext.setContextPath("/");
-		webAppContext.setResourceBase("src/main/webapp");
-		webAppContext.setParentLoaderPriority(true);
-		webAppContext.addEventListener(new GuiceConfig());
-		webAppContext.addFilter(GuiceFilter.class, "/*", null);
-
-		server.setHandler(webAppContext);
-
-		// Start the server
-		server.start();
-		server.join();*/
+		
 		server = new Server(8080);
 
         WebAppContext webAppContext = new WebAppContext();

@@ -52,8 +52,8 @@ public class GuiceConfig extends GuiceServletContextListener {
             @Override
             protected void configureServlets() {
 
-                //dataDir = getPath("data");
-            	dataDir = new File("E:\\Github\\Upload\\");
+                //dataDir = getPath("data");//for production comment in
+            	dataDir = new File("E:\\Github\\Upload");//comment out
                 tmpDir = getPath("tmp");
 
                 dataDir.mkdir();
@@ -70,11 +70,7 @@ public class GuiceConfig extends GuiceServletContextListener {
             }
 // check this implementation
             private File getPath(String folderName) {
-                // put a file into {TOMCAT-conf}/[engine]/[host]/[app=name].xml with the content:
-                //
-                // <Context path="" docBase="[app-name]">
-                // <Parameter name="qualifier" value="[whatever you like]" override="false"/>
-                // </Context>
+               
 
                 String qualifier = getServletContext().getInitParameter("qualifier");
                 if (qualifier == null) {
@@ -84,19 +80,7 @@ public class GuiceConfig extends GuiceServletContextListener {
                 }
             }
 
-          /*  @Provides
-            public UploadCleanser provideUploadCleanser() {
-                return new UploadCleanser(tmpUfc);
-            }
-            @Provides
-            public ModelService provideFeedbackService(UploadCleanser cleanser) throws IOException {
-                return new ModelService(dataDir, tmpDir, cleanser, tmpUfc, dataUfc);
-            }*/
-            
-            /*@Provides
-            public UploadCleanser provideUploadCleanser() {
-                return new UploadCleanser(tmpUfc);
-            }*/
+        
             @Provides
             public IoUtils provideUploadCleanser() {
                 return new IoUtils(tmpDir,dataDir,"E:\\Github\\Upload\\");
@@ -105,21 +89,7 @@ public class GuiceConfig extends GuiceServletContextListener {
             public ModelService provideFeedbackService(IoUtils io) throws IOException {
                 return new ModelService(dataDir, tmpDir,io, tmpUfc, dataUfc);
             }
-            /*
-            @Provides
-            public IoUtils provideUploadCleanser() {
-                return new IoUtils(tmpUfc);
-            }
-            @Provides
-            public ModelService2 provideFeedbackService(IoUtils io) throws IOException {
-                return new ModelService2(dataDir, tmpDir, io, tmpUfc, dataUfc);
-            }*/
-             
-           /* 
-            * @Provides
-            public FeedbackService provideFeedbackService(UploadCleanser cleanser) throws IOException {
-                return new FeedbackService(dataDir, tmpDir, cleanser, tmpUfc, dataUfc);
-            }*/
+           
         });
     }
 }

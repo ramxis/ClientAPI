@@ -1,8 +1,10 @@
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import com.google.common.base.Optional;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -24,47 +26,20 @@ public class cientTest {
 			String TestUploadObj2 = "C:\\Users\\rameez\\Downloads\\work-related.zip";
 			String TestUploadObj3 = "C:\\Users\\rameez\\Downloads\\application packet.zip";
 			String fileName = "testupload";
-			String Version = "2.0";
+			String Version = "beta";
 			FileInputStream fileInputStream=null;
-			//CLient
-			Client client = Client.create();
-			//WebResource webResource = client.resource(UploadURl);
-			WebResource webResource = client.resource(DeleteURl);
 			
-			//IO
-			File file = new File(TestUploadObj);
-			fileName = file.getName();
-			fileName = fileName.substring(0,fileName.indexOf('.'));
-			byte[] bFile = new byte[(int) file.length()];
-			  //convert file into array of bytes
-		    fileInputStream = new FileInputStream(file);
-		    fileInputStream.read(bFile);
-		    fileInputStream.close();
-		    modelDesc = new ModelDescriptor(fileName, Version);
-		    testObject = new UploadObject(modelDesc,bFile);
-		    /*String jsonString = serializer.SerializeUploadObj(testObject);
-		    		    
-		    //client
-		    ClientResponse response = webResource.type("application/json")
-		 		   .post(ClientResponse.class, jsonString);
-		    if (response.getStatus() != 200) {
-				throw new RuntimeException("Failed : HTTP error code : "
-				     + response.getStatus());
-			}*/
+			/*UploadFile(UploadURl,TestUploadObj,null,"beta");
+			UploadFile(UploadURl,TestUploadObj,null,"1.0");
+			UploadFile(UploadURl,TestUploadObj,fileName,"beta");
+			UploadFile(UploadURl,TestUploadObj,fileName,"1.0");*/
+			
+			deleteFile(DeleteURl,"Upload","beta");
+			/*deleteFile(DeleteURl,"Upload","1.0");
+			deleteFile(DeleteURl,fileName,"beta");
+			deleteFile(DeleteURl,fileName,"1.0");*/
 		    
-		    String jsonString2 = serializer.SerializeModelDesc(modelDesc);
 		    
-		    //client
-		    ClientResponse response = webResource.type("application/json").delete(ClientResponse.class, jsonString2);
-		    if (response.getStatus() != 200) {
-				throw new RuntimeException("Failed : HTTP error code : "
-				     + response.getStatus());
-			}
-		       
-
-			System.out.println("Output from Server .... \n");
-			String output = response.getEntity(String.class);
-			System.out.println(output);
 			
 			
 		}
@@ -73,6 +48,114 @@ public class cientTest {
 			e.printStackTrace();
 
 		  }
+	}
+	 //for testing only
+	static boolean  UploadFile(String uploadURI, String fileObj, String newName, String Version) throws IOException
+	{
+		if(newName != null)
+		{
+			UploadObject testObject;
+			SerializeModel	serializer = new SerializeModel();
+			Client client = Client.create();
+			WebResource webResource = client.resource(uploadURI);
+			FileInputStream fileInputStream=null;
+			//IO
+			File file = new File(fileObj);
+			byte[] bFile = new byte[(int) file.length()];
+			  //convert file into array of bytes
+		    fileInputStream = new FileInputStream(file);
+		    fileInputStream.read(bFile);
+		    fileInputStream.close();
+		    ModelDescriptor modelDesc = new ModelDescriptor(newName, Version);
+		    testObject = new UploadObject(modelDesc,bFile);
+		    String jsonString = serializer.SerializeUploadObj(testObject);
+		    ClientResponse response = webResource.type("application/json").post(ClientResponse.class, jsonString);
+			    if (response.getStatus() != 200) 
+			    {
+					throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+				}
+			    System.out.println("Output from Server .... \n");
+				String output = response.getEntity(String.class);
+				System.out.println(output);
+			return true;
+		}
+		else
+		{
+			UploadObject testObject;
+			SerializeModel	serializer = new SerializeModel();
+			Client client = Client.create();
+			WebResource webResource = client.resource(uploadURI);
+			FileInputStream fileInputStream=null;
+			//IO
+			File file = new File(fileObj);
+			newName = file.getName();
+			newName = newName.substring(0,newName.indexOf('.'));
+			byte[] bFile = new byte[(int) file.length()];
+			  //convert file into array of bytes
+		    fileInputStream = new FileInputStream(file);
+		    fileInputStream.read(bFile);
+		    fileInputStream.close();
+		    ModelDescriptor modelDesc = new ModelDescriptor(newName, Version);
+		    testObject = new UploadObject(modelDesc,bFile);
+		    String jsonString = serializer.SerializeUploadObj(testObject);
+		    ClientResponse response = webResource.type("application/json").post(ClientResponse.class, jsonString);
+			    if (response.getStatus() != 200) 
+			    {
+					throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+				}
+			    System.out.println("Output from Server .... \n");
+				String output = response.getEntity(String.class);
+				System.out.println(output);
+			return true;
+		}
+				
+		
+	}
+	
+	boolean UploadFile(String uploadURI, ModelDescriptor fileDescriptor, File file) throws IOException
+	{
+		UploadObject testObject;
+		SerializeModel	serializer = new SerializeModel();
+		Client client = Client.create();
+		WebResource webResource = client.resource(uploadURI);
+		FileInputStream fileInputStream=null;
+		byte[] bFile = new byte[(int) file.length()];
+		  //convert file into array of bytes
+	    fileInputStream = new FileInputStream(file);
+	    fileInputStream.read(bFile);
+	    fileInputStream.close();
+	    testObject = new UploadObject(fileDescriptor,bFile);
+	    String jsonString = serializer.SerializeUploadObj(testObject);
+	    ClientResponse response = webResource.type("application/json").post(ClientResponse.class, jsonString);
+		    if (response.getStatus() != 200) 
+		    {
+				throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+			}
+		    System.out.println("Output from Server .... \n");
+			String output = response.getEntity(String.class);
+			System.out.println(output);
+		return true;
+	}
+	
+	static boolean deleteFile(String deleteURI, String fileName, String Version)
+	{
+		SerializeModel	serializer = new SerializeModel();
+		Client client = Client.create();
+		WebResource webResource = client.resource(deleteURI);
+		ModelDescriptor modelDesc = new ModelDescriptor(fileName, Version);
+		String jsonString = serializer.SerializeModelDesc(modelDesc);
+		//client
+		 ClientResponse response = webResource.type("application/json").delete(ClientResponse.class, jsonString);
+	    if (response.getStatus() != 200) {
+			throw new RuntimeException("Failed : HTTP error code : "
+			     + response.getStatus());
+		}
+	       
+
+		System.out.println("Output from Server .... \n");
+		String output = response.getEntity(String.class);
+		System.out.println(output);
+		return true;
 	}
 	
 }
