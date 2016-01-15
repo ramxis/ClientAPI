@@ -22,10 +22,10 @@
 
  
 	
-	
 
 
-<!--	<servlet> 
+
+<!--<servlet> 
 		<servlet-name>JettyDefaultServlet</servlet-name>
 		<servlet-class>org.eclipse.jetty.servlet.DefaultServlet</servlet-class>
 		<init-param>
@@ -35,11 +35,11 @@
         <param-value>true</param-value>
 
     </init-param>
-	</servlet>-->
-<!-- 	<servlet-mapping>
+	</servlet>	-->
+<!--<servlet-mapping>
 		<servlet-name>JettyDefaultServlet</servlet-name>
-		<url-pattern>/rest/upload/*</url-pattern>
-	</servlet-mapping>-->
+		<url-pattern>/static/*</url-pattern>
+	</servlet-mapping>	 	-->
 	
 
 

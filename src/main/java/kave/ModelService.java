@@ -40,7 +40,7 @@ public class ModelService {
 	// need to know what is a valid feedback file might need to delete or change
 	// it!
 	@Inject
-	public ModelService(File dataFolder, File tmpFolder, IoUtils io, UniqueFileCreator tmpufc, UniqueFileCreator dataUfc)
+	public ModelService(File dataFolder, File tmpFolder, IoUtils io)
 			throws IOException {
 		this.dataFolder = dataFolder;
 		// this.dataFolder = new File("E:\\Github\\Upload\\");
