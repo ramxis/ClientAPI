@@ -4,14 +4,23 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import com.google.common.collect.Lists;
+import com.google.common.io.Files;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class IoUtilsTest {
 	@Rule
@@ -19,168 +28,252 @@ public class IoUtilsTest {
 	@Rule
 	public TemporaryFolder root = new TemporaryFolder();
 
-
 	private IoUtils sut;
 	private File dataDir;
+	private File indexFile;
+	private String fileObj,fileObj2,fileObj3;
+
 	@Before
 	public void setup() {
 
-		dataDir = new File("E:\\Github\\Upload");
-		//sut = new IoUtils(tmp.getRoot(),root.getRoot(),root.getRoot().getPath());
-		sut = new IoUtils(tmp.getRoot(),dataDir,"E:\\Github\\Upload");
+		/*dataDir = new File("E:\\Github\\Upload");
+		dataDir.mkdir();
+		indexFile = new File(dataDir +"\\"+ "index.json");
+		sut = new IoUtils(tmp.getRoot(), dataDir, "E:\\Github\\Upload");*/
+		
+		indexFile = new File(root.getRoot() +"\\"+ "index.json");
+		sut = new IoUtils(tmp.getRoot(),root.getRoot(),root.getRoot().getPath());
+		dataDir = root.getRoot();
+		
+		
+		fileObj = "C:\\Users\\rameez\\Downloads\\Upload.zip";
+		fileObj2 = "C:\\Users\\rameez\\Downloads\\work-related.zip";
+		fileObj3 = "C:\\Users\\rameez\\Downloads\\application packet.zip";
+	}
+
+	
+	@Test
+	public void removeSomeExistingModelDesc() throws IOException {
+		prepareIndex(md("1", "1"), md("2", "1"));
+		sut.removeIndex(md("2", "1"));
+		assertIndex(md("1", "1"));
+	}
+
+	@Test
+	public void removeFinalModelDesc() throws IOException {
+		prepareIndex(md("2", "1"));
+		sut.removeIndex(md("2", "1"));
+		assertIndex();
 	}
 	@Test
-	public void removeIndexTest() throws IOException {
-		ModelDescriptor modelDesc ;
-		modelDesc = new ModelDescriptor("Upload", "beta");
-		assertTrue("Index does not exits in the index File", sut.removeIndex(modelDesc));
-		modelDesc = new ModelDescriptor("Upload", "1.0");
-		assertTrue("Index does not exits in the index File", sut.removeIndex(modelDesc));//remove existing index
-
-		modelDesc = new ModelDescriptor("falsetestupload", "1.0");//try and remove index which does not exit
-		assertTrue("Index does not exits in the index File", sut.removeIndex(modelDesc));
-		modelDesc = new ModelDescriptor("testupload", "falseversion");
-		assertTrue("Index does not exits in the index File", sut.removeIndex(modelDesc));
-		modelDesc = new ModelDescriptor("falsetestupload", "falseversion");
-		assertTrue("Index does not exits in the index File", sut.removeIndex(modelDesc));
-
+	public void removeNonExistingModelDesc() throws IOException {
+		prepareIndex(md("1", "1"), md("2", "1"));
+		assertFalse(sut.removeIndex(md("3", "1")));
 	}
 	
 	@Test
-	public void addIndex() throws IOException, JSONException {
-		ModelDescriptor modelDesc ;
-		modelDesc = new ModelDescriptor("Upload", "beta");//check duplicate index addition
-		assertTrue("index File does not exits", sut.addIndex(modelDesc));
-		
-
+	public void addDuplicateToIndex() throws IOException, JSONException {
+		prepareIndex(md("1", "1"));
+		sut.addIndex(md("1", "1"));
+		assertIndex(md("1", "1"));
 	}
-	@Test
-	public void chkDuplicateIndex() throws IOException, JSONException {
-		addIndex();
-		ModelDescriptor modelDesc ;
-		modelDesc = new ModelDescriptor("Upload", "beta");//check duplicate index addition
-		assertTrue("index File does not exits", sut.addIndex(modelDesc));
-		
 
-	}
 	@Test
-	public void addUniqueIndex() throws IOException, JSONException {
-		ModelDescriptor modelDesc ;
-		modelDesc = new ModelDescriptor("Upload", "1.0");//check unique index addition
-		assertTrue("index File does not exits ", sut.addIndex(modelDesc));
-		modelDesc = new ModelDescriptor("testupload", "1.0");
-		assertTrue("index File does not exits ", sut.addIndex(modelDesc));
+	public void addingSomethingToIndex() throws IOException, JSONException {
+		prepareIndex(md("1", "1"));
+		sut.addIndex(md("3", "1"));
+		assertIndex(md("1", "1"), md("3", "1"));
+	}
+	
+	@Test
+	public void uploadNewFileTest() throws IOException, JSONException {
 		
-
-	}
-	@Test
-	public void addnewFileTest() throws IOException, JSONException
-	{
-		String fileObj = "C:\\Users\\rameez\\Downloads\\Upload.zip";
-		String fileObj2 = "C:\\Users\\rameez\\Downloads\\work-related.zip";
-		String fileObj3 = "C:\\Users\\rameez\\Downloads\\application packet.zip";
-		FileInputStream fileInputStream=null;
-		//IO
+		// IO
 		File file = new File(fileObj);
-		//File file = new File(fileObj2);
-		//File file = new File(fileObj3);
 		String newName = file.getName();
-		String Version = "beta";
-		newName = newName.substring(0,newName.indexOf('.'));
-		byte[] bFile = new byte[(int) file.length()];
-		  //convert file into array of bytes
-	    fileInputStream = new FileInputStream(file);
-	    fileInputStream.read(bFile);
-	    fileInputStream.close();
-	    ModelDescriptor modelDesc = new ModelDescriptor(newName, Version);
-	    assertTrue(sut.addFile(modelDesc, bFile));
-	}
-	@Test
-	public void updateExistingFileTest() throws IOException, JSONException
-	{
-		addnewFileTest();
-		String fileObj = "C:\\Users\\rameez\\Downloads\\Upload.zip";
-		String fileObj2 = "C:\\Users\\rameez\\Downloads\\work-related.zip";
-		String fileObj3 = "C:\\Users\\rameez\\Downloads\\application packet.zip";
-		FileInputStream fileInputStream=null;
-		//IO
-		File file = new File(fileObj);
-		//File file = new File(fileObj2);
-		//File file = new File(fileObj3);
-		String newName = file.getName();
-		String Version = "beta";
-		newName = newName.substring(0,newName.indexOf('.'));
-		byte[] bFile = new byte[(int) file.length()];
-		  //convert file into array of bytes
-	    fileInputStream = new FileInputStream(file);
-	    fileInputStream.read(bFile);
-	    fileInputStream.close();
-	    ModelDescriptor modelDesc = new ModelDescriptor(newName, Version);
-	    assertTrue(sut.addFile(modelDesc, bFile));
+		String Version = "1";
+		newName = newName.substring(0, newName.indexOf('.'));
+		ModelDescriptor uds = md(newName,Version);
+		byte[] fileBytes = fileContent(file);
+		sut.addFile(uds, fileBytes);
+		assertUpload(uds,fileBytes);
 	}
 	
 	@Test
-	public void addtmpFileTest() throws IOException, JSONException
-	{
-		String fileObj = "C:\\Users\\rameez\\Downloads\\Upload.zip";
-		String fileObj2 = "C:\\Users\\rameez\\Downloads\\work-related.zip";
-		String fileObj3 = "C:\\Users\\rameez\\Downloads\\application packet.zip";
-		FileInputStream fileInputStream=null;
-		//IO
-		File file = new File(fileObj);
-		//File file = new File(fileObj2);
-		//File file = new File(fileObj3);
-		String newName = file.getName();
-		String Version = "beta";
-		newName = newName.substring(0,newName.indexOf('.'));
-		byte[] bFile = new byte[(int) file.length()];
-		  //convert file into array of bytes
-	    fileInputStream = new FileInputStream(file);
-	    fileInputStream.read(bFile);
-	    fileInputStream.close();
-	    ModelDescriptor modelDesc = new ModelDescriptor(newName, Version);
-	    File chkfile = sut.tmpadd(modelDesc, bFile);
-	    assertTrue(chkfile.exists());
-	}
-	
-	@Test
-	public void removeFileTest() throws IOException, JSONException {
-		ModelDescriptor modelDesc ;
-		modelDesc = new ModelDescriptor("Upload", "beta");
-		assertTrue(sut.removeFile(modelDesc));
-		modelDesc = new ModelDescriptor("Upload", "1.0");
-		assertTrue(sut.removeFile(modelDesc));
-		modelDesc = new ModelDescriptor("testupload", "1.0");
-		assertTrue(sut.removeFile(modelDesc));
-	}
-	
-	@Test
-	public void FileContentsAreNotChanged() throws IOException, JSONException {
-		String sourcefile = "C:\\Users\\rameez\\Downloads\\Upload.zip";
-		addnewFileTest();//make sure the file is uploaded;
-		String fileDescriptor = "Upload-beta.zip";
-		String uploadFile = dataDir.getPath() +"\\"+fileDescriptor;
-		File file = new File(uploadFile);
-		assertTrue("File does not exist in data folder!",file.exists());
+	public void updateExistingFileTest() throws IOException, JSONException, InterruptedException {
 		
-		byte[] sourceFileContent = getFileContent(sourcefile);
-		byte[] uploadFileContent = getFileContent(uploadFile);
-		assertArrayEquals(sourceFileContent, uploadFileContent);
+		// IO
+		File file = new File(fileObj);
+		String newName = file.getName();
+		String Version = "1";
+		newName = newName.substring(0, newName.indexOf('.'));
+		ModelDescriptor uds = md(newName,Version);
+		byte[] fileBytes = fileContent(file);
+		sut.addFile(uds, fileBytes);
+		File uploadedfile = getFileHandle(uds,dataDir.getAbsolutePath());
+		long t1 = uploadedfile.lastModified();
+		TimeUnit.SECONDS.sleep(1);//for inspecting visually that files have been overwritten
+		sut.addFile(uds, fileBytes);
+		File updatedFile = getFileHandle(uds,dataDir.getAbsolutePath());
+		long t2 = updatedFile.lastModified();
+		assertDuplicate(t1,t2,uds);
+		
+	}
+	
+	@Test
+	public void addtmpFileTest() throws IOException, JSONException {
+		File file = new File(fileObj);
+		String newName = file.getName();
+		String Version = "1";
+		newName = newName.substring(0, newName.indexOf('.'));
+		ModelDescriptor uds = md(newName,Version);
+		byte[] fileBytes = fileContent(file);
+		sut.tmpadd(uds, fileBytes);
+		assertTrue(assertTmp(uds));
+		
+	}
+
+	@Test
+	public void removeExistingFileTest() throws IOException, JSONException {
+		// IO
+		File file = new File(fileObj);
+	    String newName = file.getName();
+	    String Version = "1";
+		newName = newName.substring(0, newName.indexOf('.'));
+		ModelDescriptor delFileDescriptor = md(newName,Version);
+		byte[] fileBytes = fileContent(file);
+		sut.addFile(delFileDescriptor, fileBytes);
+		sut.removeFile(delFileDescriptor);
+		assertDelete(delFileDescriptor);
+	}
+	
+	@Test
+	public void removeNonExistingFileTest() throws IOException, JSONException {
+		// IO
+		File file = new File(fileObj);
+		String newName = file.getName();
+	    String Version = "1";
+		newName = newName.substring(0, newName.indexOf('.'));
+		ModelDescriptor uds = md(newName,Version);
+		byte[] fileBytes = fileContent(file);
+		sut.addFile(uds, fileBytes);
+		ModelDescriptor delFileDescriptor = md("3", "1");
+		assertDeleteNonExisting(delFileDescriptor);
 		
 		
 	}
 
-	public byte[] getFileContent(String fileLocation) throws IOException
+
+	
+	private void assertDeleteNonExisting(ModelDescriptor delFileDescriptor) throws JSONException, IOException {
+		// TODO Auto-generated method stub
+		assertFalse(sut.removeFile(delFileDescriptor));//remove function should return false for non existing file
+		assertFalse(sut.removeIndex(delFileDescriptor));// should return false for non existing index
+	}
+
+
+	private void assertDelete(ModelDescriptor uds) throws IOException {
+		// TODO Auto-generated method stub
+		File rFileHandle = getFileHandle(uds,dataDir.getAbsolutePath());
+		assertIndex();// filedescriptor should be deleted
+		assertFalse(rFileHandle.exists()); // fileshould be deleted
+		
+	}
+
+
+	private void assertDuplicate(long origional, long updated, ModelDescriptor md) throws IOException
 	{
-		FileInputStream fileInputStream=null;
-		//IO
+		assertIndex(md); // only one model descriptor should exist
+		assertNotEquals(origional,updated);
+	}
+
+	private void prepareIndex(ModelDescriptor... mds) throws IOException {
+		List<ModelDescriptor> expecteds = Lists.newArrayList(mds);
+		String json = new Gson().toJson(expecteds);
+		Files.write(json, indexFile, Charset.defaultCharset());
+	}
+
+	private void assertIndex(ModelDescriptor... mds) throws IOException {
+		List<ModelDescriptor> expecteds = Lists.newArrayList(mds);
+		List<ModelDescriptor> actuals = readActualIndex();
+		Assert.assertEquals(expecteds, actuals);
+	}
+	
+	private void assertUpload(ModelDescriptor uploadDesc, byte[] fileBytes) throws IOException {
+		// TODO Auto-generated method stub
+		assertIndex(uploadDesc);// check correct index is created
+		File uploadedFile = getFileHandle(uploadDesc, dataDir.getAbsolutePath());
+		assertFile(uploadedFile,fileBytes);//check file contents are not changed
+		assertFalse(assertTmp(uploadDesc)); // check that tmp file is deleted
+		
+	}
+	private boolean assertTmp(ModelDescriptor uploadDesc) {
+		// TODO Auto-generated method stub
+		//to check file in tmp folder
+		File tmpFile = getFileHandle(uploadDesc,tmp.getRoot().getAbsolutePath());
+		return tmpFile.exists();
+	}
+
+
+	private void assertFile(File file, byte[] expectedContent) throws IOException {
+		// TODO Auto-generated method stub
+		if(file.exists())
+		{
+			byte [] actualContent = getFileContent(file.getAbsolutePath());
+			assertArrayEquals(expectedContent, actualContent);
+		}
+		
+		
+	}
+
+	private List<ModelDescriptor> readActualIndex() throws IOException {
+		String json = FileUtils.readFileToString(indexFile);
+		List<ModelDescriptor> mds = new Gson().fromJson(json, new TypeToken<List<ModelDescriptor>>() {
+		}.getType());
+		return mds;
+	}
+
+	private ModelDescriptor md(String name, String version) {
+		return new ModelDescriptor("n" + name, "v" + version);
+	}
+
+	private byte[] fileContent(File file) throws IOException, JSONException {
+		
+		FileInputStream fileInputStream = null;
+		byte[] bFile = new byte[(int) file.length()];
+		// convert file into array of bytes
+		fileInputStream = new FileInputStream(file);
+		fileInputStream.read(bFile);
+		fileInputStream.close();
+		return bFile;
+	}
+
+	
+
+
+
+	private File getFileHandle(ModelDescriptor md, String directoryPath)
+	{
+		File fHandle = new File(directoryPath +"\\"+md.getname()+ "-" + md.getversion() + ".zip");
+		return fHandle;
+	}
+	
+
+	
+
+
+	
+	
+	public byte[] getFileContent(String fileLocation) throws IOException {
+		FileInputStream fileInputStream = null;
+		// IO
 		File file = new File(fileLocation);
 		byte[] bFile = new byte[(int) file.length()];
-		  //convert file into array of bytes
-	    fileInputStream = new FileInputStream(file);
-	    fileInputStream.read(bFile);
-	    fileInputStream.close();
-	    return bFile;
+		// convert file into array of bytes
+		fileInputStream = new FileInputStream(file);
+		fileInputStream.read(bFile);
+		fileInputStream.close();
+		return bFile;
 	}
-	
+
 }

@@ -1,64 +1,76 @@
+import static kave.CollisionHandling.OVERWRITE;
+import static kave.CollisionHandling.THROW_EXECPTION;
+
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-
-import com.google.common.base.Optional;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
+import java.util.List;
 
 import kave.ClientAPI;
-import kave.DeserializeModel;
+import kave.CollisionHandling;
+import kave.IClientAPI;
 import kave.ModelDescriptor;
-import kave.UploadObject;
 import kave.SerializeModel;
+import kave.UploadObject;
+
 public class cientTest {
-	public static void main(String[] args) {
-		try {
+	public static void main(String[] args) throws IOException {
 			ModelDescriptor modelDesc;
 			UploadObject testObject;
-			SerializeModel	serializer = new SerializeModel();
-						
-			String UploadURl = "http://127.0.0.1:8080/upload";
-			String DeleteURl = "http://127.0.0.1:8080/delete";
-			String DownloadURl = "http://127.0.0.1:8080/static/";
+			SerializeModel serializer = new SerializeModel();
+
+			String BaseUrl = "http://127.0.0.1:8080/";
+			//String BaseUrltomcat = "http://127.0.0.1:8080/";
+			//BaseUrl = BaseUrltomcat;
+			
 			String TestUploadObj = "C:\\Users\\rameez\\Downloads\\Upload.zip";
 			String TestUploadObj2 = "C:\\Users\\rameez\\Downloads\\work-related.zip";
 			String TestUploadObj3 = "C:\\Users\\rameez\\Downloads\\application packet.zip";
-			String fileName = "testupload";
-			String Version = "beta";
-			FileInputStream fileInputStream=null;
+			String TestUploadObj4 = "C:\\Users\\rameez\\Downloads\\messages.mo";
+			String fileName ;
+			String Version = "1.0";
+			
 			File downDir = new File("E:\\Github\\download\\");
-			ClientAPI test = new ClientAPI(downDir);
+			IClientAPI test = new ClientAPI(BaseUrl, downDir);
+			
+			File someFile = new File(TestUploadObj); // get from somewhere
+			fileName = someFile.getName().substring(0,someFile.getName().indexOf('.'));
+			ModelDescriptor umd = new ModelDescriptor(fileName, "1.0");
 			
 			
-			
-			test.downloadFile(DownloadURl, "index", null, true);
-			test.downloadFile(DownloadURl, fileName, Version, false);
-			//test.UploadFile(UploadURl,TestUploadObj,null,"beta");
-			/*test.UploadFile(UploadURl,TestUploadObj,null,"beta");
-			test.UploadFile(UploadURl,TestUploadObj,null,"1.0");
-			test.UploadFile(UploadURl,TestUploadObj,fileName,"beta");
-			test.UploadFile(UploadURl,TestUploadObj,fileName,"1.0");*/
-			
-			/*test.deleteFile(DeleteURl,"Upload","beta");
-			test.deleteFile(DeleteURl,"Upload","beta");
-			test.deleteFile(DeleteURl,"Upload","1.0");
-			test.deleteFile(DeleteURl,fileName,"beta");
-			test.deleteFile(DeleteURl,fileName,"1.0");*/
-		    
-		    
-			
-			
-		}
-		catch (Exception e) {
+			test.upload(umd, someFile, OVERWRITE);
+			test.upload(umd, someFile, OVERWRITE);
+			test.delete(umd);
+			someFile = new File(TestUploadObj2); // get from somewhere
+			fileName = someFile.getName().substring(0,someFile.getName().indexOf('.'));
+			 umd = new ModelDescriptor(fileName, "1.0");
+			test.upload(umd, someFile, THROW_EXECPTION);
+			//test.delete(umd);
 
-			e.printStackTrace();
+			/*List<ModelDescriptor> index = test.getIndex();
+			for (ModelDescriptor md : index) {
+				File output = test.download(md);
+				test.saveFile(md, output);
+			}*/
+			
+		
+			
+			/*
+			 * test.UploadFile(UploadURl,TestUploadObj,null,"beta");
+			 * test.UploadFile(UploadURl,TestUploadObj,null,"1.0");
+			 * test.UploadFile(UploadURl,TestUploadObj,fileName,"beta");
+			 * test.UploadFile(UploadURl,TestUploadObj,fileName,"1.0");
+			 */
 
-		  }
+			/*
+			 * test.deleteFile(DeleteURl,"Upload","beta");
+			 * test.deleteFile(DeleteURl,"Upload","beta");
+			 * test.deleteFile(DeleteURl,"Upload","1.0");
+			 * test.deleteFile(DeleteURl,fileName,"beta");
+			 * test.deleteFile(DeleteURl,fileName,"1.0");
+			 */
+
+	
 	}
-	
-	
+
 }

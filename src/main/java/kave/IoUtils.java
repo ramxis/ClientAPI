@@ -81,6 +81,10 @@ public class IoUtils {
 			jsonArray.add(fileDescriptor);
 			Gson gson = new Gson();
 			String json = gson.toJson(jsonArray);
+			if (!dataDir.exists())
+			{
+				dataDir.mkdir();
+			}
 			try {
 				FileWriter writer = new FileWriter(Path);
 				writer.write(json);
@@ -138,16 +142,10 @@ public class IoUtils {
 
 
 	public File tmpadd(ModelDescriptor modelDesc, byte[] filebyte) throws IOException {
-		String filename = "tmp" + modelDesc.getversion();
-		String fileversion = "beta";
+		String filename = modelDesc.getname();
+		String fileversion = modelDesc.getversion();
 		String fileName = filename + "-" + fileversion + ".zip";
-		File CustomFolder = new File("E:\\Github\\tmpUpload\\");
-		if (!CustomFolder.exists()) {
-
-			FileUtils.forceMkdir(CustomFolder);
-		}
-		//File file = new File(tmpDir.getPath() + "\\" + fileName);
-		File file = new File("E:\\Github\\tmpUpload\\" + "\\" + fileName);
+		File file = new File(tmpDir.getPath() + "\\" + fileName);
 		FileOutputStream fop = new FileOutputStream(file);
 		fop.write(filebyte);
 		fop.flush();
@@ -172,7 +170,7 @@ public class IoUtils {
 
 
 	public List<ModelDescriptor> getall() throws IOException {
-		List<ModelDescriptor> tmp = new ArrayList<ModelDescriptor>(); ;
+		List<ModelDescriptor> tmp = new ArrayList<ModelDescriptor>();
 		if(indexFileExits(Path))
 		{
 			Gson gson = new Gson(); 
