@@ -34,7 +34,7 @@ public class IoUtilsTest {
 	private String fileObj,fileObj2,fileObj3;
 
 	@Before
-	public void setup() {
+	public void setup() throws JSONException, IOException {
 
 		/*dataDir = new File("E:\\Github\\Upload");
 		dataDir.mkdir();
@@ -49,6 +49,7 @@ public class IoUtilsTest {
 		fileObj = "C:\\Users\\rameez\\Downloads\\Upload.zip";
 		fileObj2 = "C:\\Users\\rameez\\Downloads\\work-related.zip";
 		fileObj3 = "C:\\Users\\rameez\\Downloads\\application packet.zip";
+		
 	}
 
 	

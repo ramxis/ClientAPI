@@ -16,6 +16,10 @@ public class ModelDescriptor {
 		this.version = version;
 	}
 
+	public ModelDescriptor() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public String getname() {
 		return this.name;
 	}

@@ -43,7 +43,6 @@ public class ModelService {
 	public ModelService(File dataFolder, File tmpFolder, IoUtils io)
 			throws IOException {
 		this.dataFolder = dataFolder;
-		// this.dataFolder = new File("E:\\Github\\Upload\\");
 		this.tmpFolder = tmpFolder;
 		this.Io = io;
 		enforceFolders();
@@ -52,7 +51,7 @@ public class ModelService {
 	// creates tmp and data folders
 	private void enforceFolders() throws IOException {
 		if (!dataFolder.exists()) {
-			// File CustomFolder = new File("E:\\Github\\Upload\\");
+			
 			FileUtils.forceMkdir(dataFolder);
 		}
 		if (!tmpFolder.exists()) {
@@ -133,8 +132,5 @@ public class ModelService {
 	}
 
 	
-	/*
-	 * private File writeToTempFile(byte[] bytes) { // TODO Auto-generated
-	 * method stub return null; }
-	 */
+	
 }

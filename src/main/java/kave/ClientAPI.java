@@ -118,9 +118,9 @@ public class ClientAPI implements IClientAPI {
 		if (response.getStatus() != 200) {
 			throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
 		}
-		System.out.println("Output from Server .... \n");
+		/*System.out.println("Output from Server .... \n");
 		String output = response.getEntity(String.class);
-		System.out.println(output);
+		System.out.println(output);*/
 		return true;
 	}
 
@@ -139,7 +139,11 @@ public class ClientAPI implements IClientAPI {
 		case THROW_EXECPTION:
 			List<ModelDescriptor> updatedIndex = getIndex();
 			if(updatedIndex.contains(fileDescriptor))
-				throw new IOException();
+			{
+				IOException e = new IOException();
+				throw e;
+			}
+				
 			else
 				return UploadFile(baseUrl + "upload/", fileDescriptor, file);
 		default:
@@ -174,7 +178,7 @@ public class ClientAPI implements IClientAPI {
 
 	private File downloadFile(String fileName, String Version) throws IOException {
 		boolean index = false;
-		return downloadFile(baseUrl + "ClientAPI-0.0.1-SNAPSHOT/static/", fileName, Version, index);
+		return downloadFile(baseUrl + "static/", fileName, Version, index);
 	}
 
 	/*

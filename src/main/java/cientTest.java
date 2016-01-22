@@ -15,9 +15,7 @@ import kave.UploadObject;
 
 public class cientTest {
 	public static void main(String[] args) throws IOException {
-			ModelDescriptor modelDesc;
-			UploadObject testObject;
-			SerializeModel serializer = new SerializeModel();
+			
 
 			String BaseUrl = "http://127.0.0.1:8080/";
 			//String BaseUrltomcat = "http://127.0.0.1:8080/";
@@ -30,7 +28,7 @@ public class cientTest {
 			String fileName ;
 			String Version = "1.0";
 			
-			File downDir = new File("E:\\Github\\download\\");
+		/*	File downDir = new File("E:\\Github\\download\\");
 			IClientAPI test = new ClientAPI(BaseUrl, downDir);
 			
 			File someFile = new File(TestUploadObj); // get from somewhere
@@ -44,7 +42,7 @@ public class cientTest {
 			someFile = new File(TestUploadObj2); // get from somewhere
 			fileName = someFile.getName().substring(0,someFile.getName().indexOf('.'));
 			 umd = new ModelDescriptor(fileName, "1.0");
-			test.upload(umd, someFile, THROW_EXECPTION);
+			test.upload(umd, someFile, THROW_EXECPTION);*/
 			//test.delete(umd);
 
 			/*List<ModelDescriptor> index = test.getIndex();

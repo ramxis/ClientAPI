@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="kave.IoUtilsTest" time="3.861" tests="10" errors="0" skipped="0" failures="0">
+<testsuite name="kave.IoUtilsTest" time="3.414" tests="10" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.8.0_66\jre\bin"/>
@@ -26,7 +26,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="user.variant" value=""/>
     <property name="os.name" value="Windows 10"/>
-    <property name="classworlds.conf" value="C:\Users\rameez\Javaworkspace\.metadata\.plugins\org.eclipse.m2e.launching\launches\m2conf4794221285601550079.tmp"/>
+    <property name="classworlds.conf" value="C:\Users\rameez\Javaworkspace\.metadata\.plugins\org.eclipse.m2e.launching\launches\m2conf6140462059973496663.tmp"/>
     <property name="sun.jnu.encoding" value="Cp1252"/>
     <property name="java.library.path" value="C:\Program Files\Java\jdk1.8.0_66\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:/Program Files/Java/jdk1.8.0_25/jre/bin/server;C:/Program Files/Java/jdk1.8.0_25/jre/bin;C:/Program Files/Java/jdk1.8.0_25/jre/lib/amd64;C:\ProgramData\Oracle\Java\javapath;C:\Program Files (x86)\Python 3.5\Scripts\;C:\Program Files (x86)\Python 3.5\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Common Files\Microsoft Shared\Microsoft Online Services;C:\Program Files (x86)\Common Files\Microsoft Shared\Microsoft Online Services;C:\Program Files (x86)\AMD APP\bin\x86_64;C:\Program Files (x86)\AMD APP\bin\x86;c:\Program Files (x86)\Intel\iCLS Client\;c:\Program Files\Intel\iCLS Client\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;c:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Windows Live\Shared;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program;C:\Program Files\MiKTeX 2.9\miktex\bin\x64\;C:\Program Files\Microsoft\Web Platform Installer\;C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET Web Pages\v1.0\;C:\Program Files (x86)\Windows Kits\8.0\Windows Performance Toolkit\;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\AMD\ATI.ACE\Core-Static;C:\Program Files (x86)\Sophos\Sophos SSL VPN Client\bin;C:\Program Files (x86)\Skype\Phone\;C:\Program Files (x86)\Sophos\Sophos SSL VPN Client\bin;C:\Users\rameez\Desktop;;."/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
@@ -60,14 +60,14 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase name="removeNonExistingFileTest" classname="kave.IoUtilsTest" time="0.604"/>
-  <testcase name="removeFinalModelDesc" classname="kave.IoUtilsTest" time="0.137"/>
-  <testcase name="addingSomethingToIndex" classname="kave.IoUtilsTest" time="0.023"/>
-  <testcase name="removeExistingFileTest" classname="kave.IoUtilsTest" time="0.055"/>
+  <testcase name="removeNonExistingFileTest" classname="kave.IoUtilsTest" time="0.217"/>
+  <testcase name="removeFinalModelDesc" classname="kave.IoUtilsTest" time="0.095"/>
+  <testcase name="addingSomethingToIndex" classname="kave.IoUtilsTest" time="0.021"/>
+  <testcase name="removeExistingFileTest" classname="kave.IoUtilsTest" time="0.06"/>
   <testcase name="removeNonExistingModelDesc" classname="kave.IoUtilsTest" time="0.013"/>
-  <testcase name="addtmpFileTest" classname="kave.IoUtilsTest" time="0.029"/>
-  <testcase name="removeSomeExistingModelDesc" classname="kave.IoUtilsTest" time="0.024"/>
-  <testcase name="updateExistingFileTest" classname="kave.IoUtilsTest" time="1.086"/>
-  <testcase name="addDuplicateToIndex" classname="kave.IoUtilsTest" time="0.017"/>
-  <testcase name="uploadNewFileTest" classname="kave.IoUtilsTest" time="1.873"/>
+  <testcase name="addtmpFileTest" classname="kave.IoUtilsTest" time="0.033"/>
+  <testcase name="removeSomeExistingModelDesc" classname="kave.IoUtilsTest" time="0.016"/>
+  <testcase name="updateExistingFileTest" classname="kave.IoUtilsTest" time="1.076"/>
+  <testcase name="addDuplicateToIndex" classname="kave.IoUtilsTest" time="0.012"/>
+  <testcase name="uploadNewFileTest" classname="kave.IoUtilsTest" time="1.871"/>
 </testsuite>

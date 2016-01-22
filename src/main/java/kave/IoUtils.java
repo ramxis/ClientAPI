@@ -32,7 +32,7 @@ public class IoUtils {
 		this.dataDir = dataDir;
 		this.tmpDir = tmpDir;
 		this.Path = Path + "\\" + "index.json";
-
+		
 
 	}
 
@@ -50,7 +50,7 @@ public class IoUtils {
 
 	public boolean addIndex(ModelDescriptor fileDescriptor) throws JSONException, IOException {
 		List<ModelDescriptor> jsonArray = new ArrayList<ModelDescriptor>();
-		jsonArray = getall();
+		jsonArray = getAll();
 		if(indexFileExits(Path))
 		{
 			if(!(jsonArray.contains(fileDescriptor)))
@@ -100,7 +100,7 @@ public class IoUtils {
 
 	public boolean removeIndex(ModelDescriptor delFileDescriptor) throws IOException {
 		List<ModelDescriptor> tmp = new ArrayList<ModelDescriptor>();
-		tmp = getall();
+		tmp = getAll();
 		if(tmp.contains(delFileDescriptor))
 		{
 			tmp.remove(delFileDescriptor);
