@@ -9,8 +9,9 @@ namespace ClientAPI
 {
     class ModelDescriptor
     {
-        [JsonProperty]private String name;
-        [JsonProperty]private String version;
+        //[JsonProperty]private String name;
+        public String name;
+        public String version;
 
         public ModelDescriptor(String name, String version)
         {

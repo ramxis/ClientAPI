@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.Web.Script.Serialization;
 using System.Net;
 namespace ClientAPI
 {
@@ -19,7 +20,7 @@ namespace ClientAPI
             string upload = "upload/";
             string DownDirectory = @"E:\Github\download";
             string FilePath = @"C:\Users\rameez\Downloads\work-related.zip";
-            test = new ClientAPI(URI+tomcat, DownDirectory);
+            test = new ClientAPI(URI, DownDirectory);
             String filename = Path.GetFileNameWithoutExtension(FilePath);
             String version = "1";
             ModelDescriptor md = new ModelDescriptor(filename,version);
@@ -62,8 +63,7 @@ namespace ClientAPI
         {
             byte[] bFile = FileToByteArray(FilePath);
             UploadObject UPObj = new UploadObject(fileDescriptor, bFile);
-            String json = JsonConvert.SerializeObject(UPObj);
-
+            var json2 = new JavaScriptSerializer().Serialize(UPObj);
             uploadURI = BaseUrl + uploadURI;
            
 
@@ -71,7 +71,7 @@ namespace ClientAPI
             using (var client = new WebClient())
             {
                 client.Headers[HttpRequestHeader.ContentType] = "application/json";
-                result = client.UploadString(uploadURI, "POST", json);
+                result = client.UploadString(uploadURI, "POST", json2);
             }
             Console.WriteLine(result);
             return true;

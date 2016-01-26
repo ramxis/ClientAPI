@@ -9,8 +9,8 @@ namespace ClientAPI
 {
     class UploadObject
     {
-        [JsonProperty]private ModelDescriptor modelDesc;
-        [JsonProperty]private byte[] bytes;
+        public ModelDescriptor modelDesc;
+        public byte[] bytes;
 
 	    public UploadObject(ModelDescriptor modelDesc, byte[] filebyte)  {
 		// TODO Auto-generated constructor stub
