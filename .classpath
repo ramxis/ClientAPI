@@ -45,5 +45,15 @@
 	<classpathentry kind="lib" path="C:/Users/rameez/Javaworkspace/ClientAPI/WebContent/WEB-INF/osgi-resource-locator-1.0.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/rameez/Javaworkspace/ClientAPI/WebContent/WEB-INF/persistence-api-1.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/rameez/Javaworkspace/ClientAPI/WebContent/WEB-INF/validation-api-1.1.0.Final.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rameez/.m2/repository/com/google/inject/extensions/guice-servlet/3.0/guice-servlet-3.0.jar" sourcepath="C:/Users/rameez/.m2/repository/com/google/inject/extensions/guice-servlet/3.0/guice-servlet-3.0-sources.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="org.eclipse.jst.component.archivename" value="guice-servlet-3.0.jar"/>
+			<attribute name="maven.groupId" value="com.google.inject.extensions"/>
+			<attribute name="maven.artifactId" value="guice-servlet"/>
+			<attribute name="maven.version" value="3.0"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

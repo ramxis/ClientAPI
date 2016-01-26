@@ -53,10 +53,6 @@ public class ClientAPI implements IClientAPI {
 		if (response.getStatus() != 200) {
 			throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
 		}
-
-		System.out.println("Output from Server .... \n");
-		String output = response.getEntity(String.class);
-		System.out.println(output);
 		return true;
 	}
 
@@ -118,9 +114,7 @@ public class ClientAPI implements IClientAPI {
 		if (response.getStatus() != 200) {
 			throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
 		}
-		/*System.out.println("Output from Server .... \n");
-		String output = response.getEntity(String.class);
-		System.out.println(output);*/
+		
 		return true;
 	}
 
@@ -210,6 +204,30 @@ public class ClientAPI implements IClientAPI {
 	public boolean saveFile(ModelDescriptor md, File file) throws IOException {
 		String fileName = md.getname() + "-" + md.getversion() + ".zip";
 		return saveFile(file,fileName);
+	}
+//remove later
+	public void upload2(ModelDescriptor2 umd2, File someFile) throws IOException {
+		// TODO Auto-generated method stub
+		
+		UploadObject2 testObject2;
+		SerializeModel2 serializer = new SerializeModel2();
+		Client client = Client.create();
+		WebResource webResource = client.resource(baseUrl + "upload/");
+		FileInputStream fileInputStream = null;
+		byte[] bFile = new byte[(int) someFile.length()];
+		// convert file into array of bytes
+		fileInputStream = new FileInputStream(someFile);
+		fileInputStream.read(bFile);
+		fileInputStream.close();
+		testObject2 = new UploadObject2(umd2, bFile);
+		String jsonString = serializer.SerializeUploadObj(testObject2);
+		ClientResponse response = webResource.type("application/json").post(ClientResponse.class, jsonString);
+		if (response.getStatus() != 200) {
+			throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+		}
+		
+		
+		
 	}
 	
 	

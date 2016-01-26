@@ -36,10 +36,22 @@ public class IoUtils {
 
 	}
 
+	public void enforceFolders() throws IOException {
+		if (!dataDir.exists()) {
+
+			FileUtils.forceMkdir(dataDir);
+		}
+		if (!tmpDir.exists()) {
+			FileUtils.forceMkdir(tmpDir);
+		}
+		
+		throw new RuntimeException("test e before using");
+		
+	}
+	
 	// all index related functions
-	public boolean indexFileExits(String indexPath) {
-		File tmpFile = new File(indexPath);
-		if (tmpFile.exists()) {
+	private boolean indexFileExits() {
+		if (new File(this.Path).exists()) {
 
 			return true;
 		}
@@ -51,7 +63,7 @@ public class IoUtils {
 	public boolean addIndex(ModelDescriptor fileDescriptor) throws JSONException, IOException {
 		List<ModelDescriptor> jsonArray = new ArrayList<ModelDescriptor>();
 		jsonArray = getAll();
-		if(indexFileExits(Path))
+		if(indexFileExits())
 		{
 			if(!(jsonArray.contains(fileDescriptor)))
 			{
@@ -141,7 +153,7 @@ public class IoUtils {
 
 
 
-	public File tmpadd(ModelDescriptor modelDesc, byte[] filebyte) throws IOException {
+	public File tmpAdd(ModelDescriptor modelDesc, byte[] filebyte) throws IOException {
 		String filename = modelDesc.getname();
 		String fileversion = modelDesc.getversion();
 		String fileName = filename + "-" + fileversion + ".zip";
@@ -158,7 +170,7 @@ public class IoUtils {
 		// TODO Auto-generated method stub
 		String filename = modelDesc.getname();
 		String fileversion = modelDesc.getversion();
-		File file = tmpadd(modelDesc,filebyte);
+		File file = tmpAdd(modelDesc,filebyte);
 		String fileName = filename + "-" + fileversion + ".zip"; 
 		File dataFile = new File(dataDir.getPath() + "\\" + fileName);
 		//FileUtils.moveFile(file, dataFile);//for production comment in
@@ -169,9 +181,9 @@ public class IoUtils {
 	}
 
 
-	public List<ModelDescriptor> getall() throws IOException {
+	public List<ModelDescriptor> getAll() throws IOException {
 		List<ModelDescriptor> tmp = new ArrayList<ModelDescriptor>();
-		if(indexFileExits(Path))
+		if(indexFileExits())
 		{
 			Gson gson = new Gson(); 
 			JsonReader reader = new JsonReader(new FileReader(Path));

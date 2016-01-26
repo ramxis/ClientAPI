@@ -135,7 +135,7 @@
         <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
                prefix="localhost_access_log" suffix=".txt"
                pattern="%h %l %u %t &quot;%r&quot; %s %b" />
-			    <Context docBase="E:\Github\Upload" path="ClientAPI-0.0.1-SNAPSHOT/static" />
+			    <Context docBase="E:\Github\Upload" path="ClientAPI-1/static" />
 
       </Host>
     </Engine>
