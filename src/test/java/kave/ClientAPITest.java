@@ -20,6 +20,7 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mock;
 import org.openqa.selenium.remote.JsonException;
 
 import com.google.common.collect.Lists;
@@ -41,18 +42,21 @@ public class ClientAPITest {
 	public TemporaryFolder root = new TemporaryFolder();
 	@Rule
 	public TemporaryFolder downloadDir = new TemporaryFolder();
+	@Mock
+	private IHttpUtils httpTest;
 	
-	@BeforeClass
+	/*@BeforeClass
 	public static void setupBeforeClass() throws InterruptedException, Exception{
 		//server = new EmbeddedServer();
 		//server.start();
+		//server.join();
 		
 	}
 	
 	@AfterClass
 	public static void teardownAfterClass() throws Exception{
 		//server.stop();
-	}
+	}*/
 	
 	@Before
 	public void setup() throws InterruptedException, Exception {
@@ -62,9 +66,9 @@ public class ClientAPITest {
 		
 		
 		BaseUrl = "http://127.0.0.1:8080/";
-		//downDir = new File("E:\\Github\\download\\");
+		//downDir = new File("F:\\Github\\download\\");
 		downDir = downloadDir.getRoot();
-		//test = new ClientAPI(BaseUrl, downDir);
+		
 		Urltomcat = "ClientAPI-1/";
 		
 		
@@ -75,16 +79,10 @@ public class ClientAPITest {
 		
 		PrepareClient(BaseUrl, downDir);
 		UploadObject umd = prepareUploadObject();
-		test.upload(umd.getModelDesc(),getFileFor(umd.getModelDesc()), OVERWRITE);
-		//assertNewIndex(umd.getModelDesc());
-		/*PrepareClient(BaseUrl, downDir);
-		File someFile = new File(TestUploadObj); // get from somewhere
-		fileName = someFile.getName().substring(0,someFile.getName().indexOf('.'));
-		ModelDescriptor umd = new ModelDescriptor(fileName, "1.0");
-		test.upload(umd, someFile, OVERWRITE);
+		Result<String> result=test.upload(umd.getModelDesc(),getFileFor(umd.getModelDesc()), OVERWRITE);
+		assertNewIndex(result);
 		
-		assertNewIndex(umd);*/
-			
+				
 	}
 	
 	
@@ -92,6 +90,7 @@ public class ClientAPITest {
 	public void getIndexTest() throws IOException {
 		
 		PrepareClient(BaseUrl+Urltomcat, downDir);
+		//PrepareClient(BaseUrl, downDir);
 		test.getIndex();
 		File indexFile = new File(downDir+"\\index.json");
 		assertTrue(indexFile.exists());
@@ -103,30 +102,20 @@ public class ClientAPITest {
 		
 		PrepareClient(BaseUrl+Urltomcat, downDir);
 		UploadObject umd = prepareUploadObject();
-		test.upload(umd.getModelDesc(),getFileFor(umd.getModelDesc()), OVERWRITE);
-		assertNewIndex(umd.getModelDesc());
+		Result<String> result = test.upload(umd.getModelDesc(),getFileFor(umd.getModelDesc()), OVERWRITE);
+		assertNewIndex(result);
 			
 	}
 	
-	@Test
-	public void uploadNewFileJetty2() throws IOException, JSONException {
-		
-		//PrepareClient(BaseUrl, downDir);
-		File someFile = new File(TestUploadObj); // get from somewhere
-		fileName = someFile.getName().substring(0,someFile.getName().indexOf('.'));
-		ModelDescriptor2 umd2 = new ModelDescriptor2(fileName, "1.0");
-		ClientAPI test2 = new ClientAPI(BaseUrl, downDir);
-		test2.upload2(umd2, someFile);
-		
-			
-	}
+	
 	
 	
 
 	@Test(expected=IOException.class)
-	public void uploadDuplicateFileTomcat() throws IOException, JSONException {
+	public void uploadDuplicateFile() throws IOException, JSONException {
 		
-		PrepareClient(BaseUrl+Urltomcat, downDir);
+		PrepareClient(BaseUrl, downDir);
+		//PrepareClient(BaseUrl+Urltomcat, downDir);
 		UploadObject umd = prepareUploadObject();
 		test.upload(umd.getModelDesc(),getFileFor(umd.getModelDesc()), OVERWRITE);
 		UploadObject umd2 = prepareUploadObject();
@@ -138,10 +127,11 @@ public class ClientAPITest {
 	public void downLoadAllFilesTomcat() throws IOException {
 		
 		PrepareClient(BaseUrl+Urltomcat, downDir);
+		//PrepareClient(BaseUrl, downDir);
 		List<ModelDescriptor> index = test.getIndex();
 		for (ModelDescriptor md : index) {
-			File output = test.download(md);
-			test.saveFile(md, output);
+			Result<File> output = test.download(md);
+			test.saveFile(md, output.getContent());
 		}
 		List<ModelDescriptor> actualIndex = getClientIndex();
 			
@@ -158,8 +148,8 @@ public class ClientAPITest {
 		//for comparison
 		ModelDescriptor umd = md("1", "2");
 		// make sure the file exists on server:move a new file in place on server
-		File output = test.download(umd);
-		test.saveFile(umd, output);
+		Result<File> output = test.download(umd);
+		test.saveFile(umd, output.getContent());
 		assertFileExists(umd);
 		
 		List<ModelDescriptor> clientIndex = getClientIndex();
@@ -175,8 +165,8 @@ public class ClientAPITest {
 		List<ModelDescriptor> index = test.getIndex();
 		ModelDescriptor umd = md("dummyFile", "doesNotExist2");
 		
-		File output = test.download(umd);
-		test.saveFile(umd, output);
+		Result<File> output = test.download(umd);
+		test.saveFile(umd, output.getContent());
 		
 		List<ModelDescriptor> actualIndex = getClientIndex();
 			
@@ -187,19 +177,32 @@ public class ClientAPITest {
 	@Test
 	public void deleteFile() throws IOException {
 		
-		PrepareClient(BaseUrl+Urltomcat, downDir);
-		ModelDescriptor umd = md("Upload", "1");
+		//PrepareClient(BaseUrl+Urltomcat, downDir);
+		PrepareClient(BaseUrl, downDir);
+		ModelDescriptor umd = md("1", "2");
 	    // make sure the file exists on server:move a new file in place on server & update server index
-		test.delete(umd);
-		List<ModelDescriptor> clientIndex = getClientIndex();
-		assertDelete(clientIndex);
+		Result<String> response = test.delete(umd);
+		assertDelete(response);
 			
 	}
 	
-	private void assertDelete(List<ModelDescriptor> clientIndex) throws JsonException, IOException {
+	@Test(expected=RuntimeException.class)
+	public void deleteNonExistingFile() throws IOException {
+		
+		//PrepareClient(BaseUrl+Urltomcat, downDir);
+		PrepareClient(BaseUrl, downDir);
+		ModelDescriptor umd = md("dummy", "2"); // file should not exist on server
+	    Result<String> response = test.delete(umd);
+	
+			
+	}
+	
+	
+
+	private void assertDelete(Result<String> response) throws JsonException, IOException {
 		// TODO Auto-generated method stub
-		List<ModelDescriptor> serverIndex = test.getIndex(); //after deletion
-		assertNotEquals(serverIndex, clientIndex);
+		assertTrue(response.isOk());
+		assertEquals(response.getErrorMessage(), "deleteSuccessful!");
 		
 	}
 
@@ -232,10 +235,9 @@ public class ClientAPITest {
 		test = new ClientAPI(URL, downDir);
 	}
 	
-	private void assertNewIndex(ModelDescriptor... mds) throws IOException {
-		List<ModelDescriptor> expecteds = Lists.newArrayList(mds);
-		List<ModelDescriptor> actuals = test.getIndex();
-		Assert.assertEquals(expecteds, actuals);
+	private void assertNewIndex(Result<String> result) throws IOException {
+		Assert.assertTrue(result.isOk());
+		Assert.assertEquals("Success!", result.getErrorMessage());
 	}
 	
 	private UploadObject prepareUploadObject() throws IOException, JSONException
@@ -254,7 +256,7 @@ public class ClientAPITest {
 		assertTrue(getFileFor(md).exists());
 	}
 	private File getFileFor(ModelDescriptor md) {
-		return new File(downloadDir.getRoot() + "\\" + md.getname() + "-" + md.getversion() + ".zip");
+		return new File(downDir.getAbsoluteFile() + "\\" + md.getname() + "-" + md.getversion() + ".zip");
 	}
 	
 	private ModelDescriptor md(String name, String version) {

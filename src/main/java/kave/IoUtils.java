@@ -12,16 +12,13 @@ import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
-
 
 public class IoUtils {
 	public static final String EMPTY_FILE = "The file is empty or contains no valid feedback.";
 	public static final String NO_ZIP = "No valid zip file.";
-	public List<ModelDescriptor> index; 
+	public List<ModelDescriptor> index;
 	private File dataDir;
 	private File tmpDir;
 	private File indexFile;
@@ -32,7 +29,6 @@ public class IoUtils {
 		this.dataDir = dataDir;
 		this.tmpDir = tmpDir;
 		this.Path = Path + "\\" + "index.json";
-		
 
 	}
 
@@ -44,11 +40,11 @@ public class IoUtils {
 		if (!tmpDir.exists()) {
 			FileUtils.forceMkdir(tmpDir);
 		}
-		
+
 		throw new RuntimeException("test e before using");
-		
+
 	}
-	
+
 	// all index related functions
 	private boolean indexFileExits() {
 		if (new File(this.Path).exists()) {
@@ -59,89 +55,68 @@ public class IoUtils {
 
 	}
 
-
 	public boolean addIndex(ModelDescriptor fileDescriptor) throws JSONException, IOException {
-		List<ModelDescriptor> jsonArray = new ArrayList<ModelDescriptor>();
-		jsonArray = getAll();
-		if(indexFileExits())
-		{
-			if(!(jsonArray.contains(fileDescriptor)))
-			{
+		List<ModelDescriptor> jsonArray = getAll();
+		if (indexFileExits()) {
+			if (!(jsonArray.contains(fileDescriptor))) {
 				jsonArray.add(fileDescriptor);
-				Gson gson = new Gson();
-				String json = gson.toJson(jsonArray);
-				try {
-					FileWriter writer = new FileWriter(Path);
-					writer.write(json);
-					writer.close();
-
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				writeIndex(jsonArray);
 				return true;
 
-			}
-			else
-			{
-				//descriptor for updated file exists: do nothing
+			} else {
+				// descriptor for updated file exists: do nothing
 				return true;
 			}
-		}
-		else
-		{	//index file does not exist:create it
-			
+		} else { // index file does not exist:create it
+
 			jsonArray.add(fileDescriptor);
-			Gson gson = new Gson();
-			String json = gson.toJson(jsonArray);
-			if (!dataDir.exists())
-			{
+			if (!dataDir.exists()) {
 				dataDir.mkdir();
 			}
-			try {
-				FileWriter writer = new FileWriter(Path);
-				writer.write(json);
-				writer.close();
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			writeIndex(jsonArray);
 			return true;
 		}
 	}
-
-
-	public boolean removeIndex(ModelDescriptor delFileDescriptor) throws IOException {
-		List<ModelDescriptor> tmp = new ArrayList<ModelDescriptor>();
-		tmp = getAll();
-		if(tmp.contains(delFileDescriptor))
+	
+	public boolean detectCollision(ModelDescriptor fileDescriptor) throws JSONException, IOException {
+		List<ModelDescriptor> jsonArray = getAll();
+		if(jsonArray.contains(fileDescriptor))
 		{
-			tmp.remove(delFileDescriptor);
-			Gson gson = new Gson();
-			String json = gson.toJson(tmp);
-			try {
-				FileWriter writer = new FileWriter(Path);
-				writer.write(json);
-				writer.close();
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return true;
-
+			return true; // if file exists collision is detected
 		}
 		else
-		{
+			return false;
+	}
+
+	private void writeIndex(List<ModelDescriptor> index) {
+		Gson gson = new Gson();
+		String json = gson.toJson(index);
+
+		try {
+			FileWriter writer = new FileWriter(Path);
+			writer.write(json);
+			writer.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public boolean removeIndex(ModelDescriptor delFileDescriptor) throws IOException {
+		List<ModelDescriptor> tmp = getAll();
+		if (tmp.contains(delFileDescriptor)) {
+			tmp.remove(delFileDescriptor);
+			writeIndex(tmp);
+			return true;
+
+		} else {
 			return false;
 		}
 	}
 
-
 	// all file related functions
 	public boolean removeFile(ModelDescriptor delFileDescriptor) throws JSONException, IOException {
-		String tmpFilePath = dataDir.getPath() +"\\"+ delFileDescriptor.getname() + "-" + delFileDescriptor.getversion()
-		+ ".zip";
-
-		File tmpFile = new File(tmpFilePath);
+		File tmpFile = getFileName(dataDir, delFileDescriptor);
 		if (tmpFile.exists()) {
 			tmpFile.delete();
 			removeIndex(delFileDescriptor);
@@ -150,14 +125,7 @@ public class IoUtils {
 		return false;
 	}
 
-
-
-
-	public File tmpAdd(ModelDescriptor modelDesc, byte[] filebyte) throws IOException {
-		String filename = modelDesc.getname();
-		String fileversion = modelDesc.getversion();
-		String fileName = filename + "-" + fileversion + ".zip";
-		File file = new File(tmpDir.getPath() + "\\" + fileName);
+	private static File writeTmp(byte[] filebyte, File file) throws IOException {
 		FileOutputStream fop = new FileOutputStream(file);
 		fop.write(filebyte);
 		fop.flush();
@@ -165,38 +133,38 @@ public class IoUtils {
 		return file;
 	}
 
-
 	public boolean addFile(ModelDescriptor modelDesc, byte[] filebyte) throws IOException, JSONException {
 		// TODO Auto-generated method stub
-		String filename = modelDesc.getname();
-		String fileversion = modelDesc.getversion();
-		File file = tmpAdd(modelDesc,filebyte);
-		String fileName = filename + "-" + fileversion + ".zip"; 
-		File dataFile = new File(dataDir.getPath() + "\\" + fileName);
-		//FileUtils.moveFile(file, dataFile);//for production comment in
+		File tmpFile = getFileName(tmpDir, modelDesc);
+		File dataFile = getFileName(dataDir, modelDesc);
+		File file = writeTmp(filebyte, tmpFile);
+		// FileUtils.moveFile(file, dataFile);//for production comment in
 		FileUtils.copyFile(file, dataFile);
 		FileUtils.forceDelete(file);
 		return addIndex(modelDesc);
 
 	}
 
+	private static File getFileName(File dir, ModelDescriptor modelDesc) {
+		String filename = modelDesc.getname();
+		String fileversion = modelDesc.getversion();
+		String fileName = filename + "-" + fileversion + ".zip";
+		return new File(dir.getPath() + "\\" + fileName);
+	}
 
 	public List<ModelDescriptor> getAll() throws IOException {
 		List<ModelDescriptor> tmp = new ArrayList<ModelDescriptor>();
-		if(indexFileExits())
-		{
-			Gson gson = new Gson(); 
+		if (indexFileExits()) {
+			Gson gson = new Gson();
 			JsonReader reader = new JsonReader(new FileReader(Path));
 
-			tmp = gson.fromJson(reader, new TypeToken<List<ModelDescriptor>>(){}.getType());
+			tmp = gson.fromJson(reader, new TypeToken<List<ModelDescriptor>>() {
+			}.getType());
 
-		}
-		else
-		{
+		} else {
 			this.indexFile = new File(Path);
 		}
-		return tmp ;
+		return tmp;
 	}
-
 
 }

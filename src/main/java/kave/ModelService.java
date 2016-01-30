@@ -33,7 +33,24 @@ public class ModelService {
 	public Response upload(String jsonString) throws JSONException, IOException {
 		UploadObject UO = deserializationModel.DeserializeUploadDesc(jsonString);
 		Io.addFile(UO.getModelDesc(), UO.getBytes());
-		return Response.status(200).entity("File uploaded to : GITHub \n").build();
+		return Response.status(200).entity("Success!").build();
+
+	}
+	
+	@POST
+	@Path("/upload2/")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response uploadThrowException(String jsonString) throws JSONException, IOException {
+		UploadObject UO = deserializationModel.DeserializeUploadDesc(jsonString);
+		if(!(Io.detectCollision(UO.getModelDesc()))){
+			Io.addFile(UO.getModelDesc(), UO.getBytes());
+			return Response.status(200).entity("Success!").build();
+		}
+		else
+		{
+			return Response.status(200).entity("THROW_EXECPTION").build();
+		}
+		
 
 	}
 
@@ -43,9 +60,9 @@ public class ModelService {
 	public Response delete(String jsonString) throws IOException, JSONException {
 		ModelDescriptor delDescriptor = deserializationModel.DeserializeModelDesc(jsonString);
 		if (Io.removeFile(delDescriptor))
-			return Response.status(200).entity("File has been deleted").build();
+			return Response.status(200).entity("deleteSuccessful!").build();
 		else
-			return Response.status(201).entity("File/Index not found!").build();
+			return Response.status(201).entity("File/Model not found!").build();
 
 	}
 }

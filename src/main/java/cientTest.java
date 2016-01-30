@@ -1,4 +1,4 @@
-import static kave.CollisionHandling.OVERWRITE;
+/*import static kave.CollisionHandling.OVERWRITE;
 import static kave.CollisionHandling.THROW_EXECPTION;
 
 import java.io.File;
@@ -26,7 +26,7 @@ public class cientTest {
 			String TestUploadObj3 = "C:\\Users\\rameez\\Downloads\\application packet.zip";
 			String TestUploadObj4 = "C:\\Users\\rameez\\Downloads\\messages.mo";
 			String fileName ;
-			String Version = "1.0";
+			String Version = "1.0";*/
 			
 		/*	File downDir = new File("E:\\Github\\download\\");
 			IClientAPI test = new ClientAPI(BaseUrl, downDir);
@@ -69,6 +69,6 @@ public class cientTest {
 			 */
 
 	
-	}
+	//}
 
-}
+//}

@@ -120,20 +120,6 @@ public class IoUtilsTest {
 	}
 
 	@Test
-	public void addtmpFileTest() throws IOException, JSONException {
-		
-		ModelDescriptor md = md("1", "2");
-		prepareIndex(md);
-		getFileFor(md).createNewFile();
-		assertFileExists(md);
-		File file = getFileFor(md);
-		byte[] fileBytes = fileContent(file);
-		sut.tmpAdd(md, fileBytes);
-		assertTrue(assertTmp(md));
-
-	}
-
-	@Test
 	public void removeExistingFileTest() throws IOException, JSONException {
 		ModelDescriptor md = md("1", "2");
 		prepareIndex(md);

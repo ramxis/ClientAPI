@@ -10,11 +10,11 @@ public interface IClientAPI {
 
 	List<ModelDescriptor> getIndex() throws IOException, JsonException;
 
-	boolean upload(ModelDescriptor fileDescriptor, File file, CollisionHandling collionCase) throws IOException;
+	Result<String> upload(ModelDescriptor fileDescriptor, File file, CollisionHandling collionCase) throws IOException;
 
-	File download(ModelDescriptor md) throws IOException;
+	Result<File> download(ModelDescriptor md) throws IOException;
 	
 	boolean saveFile(ModelDescriptor md, File file) throws IOException;
 
-	void delete(ModelDescriptor md) throws IOException;
+	Result<String> delete(ModelDescriptor md) throws IOException;
 }

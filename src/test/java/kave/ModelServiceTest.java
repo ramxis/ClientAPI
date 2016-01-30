@@ -24,7 +24,7 @@ public class ModelServiceTest {
 		sut = new ModelService(ioUtils, deserializationModel);
 	}
 
-	@Test
+	/*@Test
 	public void makeSureIndexIsNotEmpty() throws JSONException, IOException {
 
 		ModelDescriptor expectedMD = mock(ModelDescriptor.class);
@@ -36,5 +36,5 @@ public class ModelServiceTest {
 		
 		verify(ioUtils).addFile(expectedMD, expectedArr);
 
-	}
+	}*/
 }
