@@ -27,6 +27,7 @@ public class ClientAPI<T> implements IClientAPI {
 	private Result<String> response;
 	private Result<File> fileContent;
 
+	@SuppressWarnings("unchecked")
 	public ClientAPI(String baseUrl, File downloadFolder) throws IOException {
 		this.baseUrl = baseUrl;
 		this.downloadFolder = downloadFolder;
