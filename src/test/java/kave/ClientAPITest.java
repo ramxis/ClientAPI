@@ -100,6 +100,9 @@ public class ClientAPITest {
 		ModelDescriptor md1 = md("1","2");
 		ModelDescriptor md2 = md("3","4");
 		ModelDescriptor md3 = md("5","6");
+		index.add(md1);
+		index.add(md2);
+		index.add(md3);
 		Gson gson = new Gson();
 		String json = gson.toJson(index);
 		File tmp = tmpF.newFile("index.json");
