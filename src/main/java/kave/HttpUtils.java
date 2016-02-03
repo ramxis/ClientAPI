@@ -8,6 +8,8 @@ import com.sun.jersey.api.client.WebResource;
 
 public class HttpUtils implements IHttpUtils {
 
+	
+
 	@Override
 	public Result<String> upload(String jsonString, String url) {
 		Result<String> res = new Result<String>();
@@ -44,6 +46,7 @@ public class HttpUtils implements IHttpUtils {
 			throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
 		}
 		res.setContent(response.getEntity(File.class));
+		res.setOk(true);
 		return res;
 	}
 
@@ -69,6 +72,23 @@ public class HttpUtils implements IHttpUtils {
 			res.setOk(false);
 		}
 		return res;
+	}
+
+	@Override
+	public Result<File> getIndex(String url) {
+		// TODO Auto-generated method stub
+		Result<File> res = new Result<File>();
+		ClientResponse response;
+		Client client = Client.create();
+		WebResource webResource = client.resource(url);
+		response = webResource.type("application/x-www-form-urlencode").get(ClientResponse.class);
+		if (response.getStatus() != 200) {
+			throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+		}
+		res.setContent(response.getEntity(File.class));
+		res.setOk(true);
+		return res;
+		
 	}
 
 }

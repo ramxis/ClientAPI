@@ -37,7 +37,7 @@ public class ClientAPI<T> implements IClientAPI {
 
 	public ClientAPI(File downloadFolder) throws IOException {
 		this.downloadFolder = downloadFolder;
-
+		http = new HttpUtils();
 		enforceFolders();
 	}
 
@@ -72,23 +72,23 @@ public class ClientAPI<T> implements IClientAPI {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Result<File> downloadFile(String downloadURI, String fileName, String Version, boolean index) throws IOException {
+	private Result<File> downloadFile(String downloadURI, String fileName, String Version) throws IOException {
 
 		String downloadFile = fileName;
 
-		if (index) {
+		/*if (index) {
 			downloadFile = downloadFile + ".json";
 			fileContent =  (Result<File>) http.download(downloadURI + downloadFile);
 
-		} else {
+		} else {*/
 			downloadFile = downloadFile + "-" + Version + ".zip";
 			fileContent =  (Result<File>) http.download(downloadURI + downloadFile);
 
-		}
+		//}
 
-		File file = fileContent.getContent();
-		if (index)
-			saveFile(file, downloadFile);
+		//File file = fileContent.getContent();
+		//if (index)
+			//saveFile(file, downloadFile);
 		// saveFile(file, downloadFile);
 		return fileContent;
 	}
@@ -148,14 +148,16 @@ public class ClientAPI<T> implements IClientAPI {
 	 * 
 	 * @see kave.IClientAPI#getIndex()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ModelDescriptor> getIndex() throws IOException {
-		// TODO Auto-generated method stub
-		downloadFile(baseUrl + "static/", "index", null, true);// update/download
-		// index file
-		// from server
+		
+		
+		fileContent =  (Result<File>) http.getIndex(baseUrl + "static/index.json");
+		File file = fileContent.getContent();
+		saveFile(file, "index.json");
 		List<ModelDescriptor> tmp = new ArrayList<ModelDescriptor>();
-		File file = new File(downloadFolder.getAbsolutePath() + "\\" + "index.json");
+		
 		if (file.exists()) {
 			Gson gson = new Gson();
 			JsonReader reader = new JsonReader(new FileReader(file));
@@ -168,8 +170,8 @@ public class ClientAPI<T> implements IClientAPI {
 	}
 
 	private Result<File> downloadFile(String fileName, String Version) throws IOException {
-		boolean index = false;
-		return downloadFile(baseUrl + "static/", fileName, Version, index);
+		
+		return downloadFile(baseUrl + "static/", fileName, Version);
 	}
 
 	/*

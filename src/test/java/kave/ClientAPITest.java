@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,10 +41,14 @@ public class ClientAPITest {
 	private String TestUploadObj;
 	private Result<String> uploadSuccessful;
 	private Result<String> deleteSuccessful;
+	private Result<File> fileContent;
+	private Result<File> fakeIndex;
 	
 	
 	@Rule
 	public TemporaryFolder root = new TemporaryFolder();
+	@Rule
+	public TemporaryFolder tmpF = new TemporaryFolder();
 	@Rule
 	public TemporaryFolder downloadDir = new TemporaryFolder();
 	@Mock
@@ -58,17 +63,26 @@ public class ClientAPITest {
 	public void setup() throws InterruptedException, Exception {
 		
 		TestUploadObj = "C:\\Users\\rameez\\Downloads\\work-related.zip";
-		http = mock(IHttpUtils.class);
+		//http = mock(HttpUtils.class);
 		initMocks(this);
+		
 		uploadSuccessful = new Result<String>();
 		deleteSuccessful = new Result<String>();
+		fileContent = new Result<File>();
+		fakeIndex = new Result<File>();
 		setupResults();
+		SetupFileContent(md("1", "2"));
+		createFakeIndex();
 		
 		//when(mockedClient.upload(any(ModelDescriptor.class), any(File.class),eq(OVERWRITE))).thenReturn(uploadSuccessful);
-		when(http.upload(any(String.class), any(String.class))).thenReturn(uploadSuccessful);
-		when(mockedClient.upload(any(ModelDescriptor.class), any(File.class),eq(THROW_EXECPTION))).thenThrow(new IOException());
-		when(mockedClient.delete(any(ModelDescriptor.class))).thenReturn(deleteSuccessful);
-		when(mockedClient.delete(md("dummy", "2"))).thenThrow(new RuntimeException());
+		
+		when(http.upload(anyString(), anyString())).thenReturn(uploadSuccessful);
+		when(http.delete(anyString(), anyString())).thenReturn(deleteSuccessful);
+		when(http.download(anyString())).thenReturn(fileContent);
+		when(http.getIndex(anyString())).thenReturn(fakeIndex);
+		//when(mockedClient.upload(any(ModelDescriptor.class), any(File.class),eq(THROW_EXECPTION))).thenThrow(new IOException());
+		//when(mockedClient.delete(any(ModelDescriptor.class))).thenReturn(deleteSuccessful);
+		//when(mockedClient.delete(md("dummy", "2"))).thenThrow(new RuntimeException());
 		
 		BaseUrl = "http://127.0.0.1:8080/";
 		//downDir = new File("F:\\Github\\download\\");
@@ -79,6 +93,29 @@ public class ClientAPITest {
 		
 	}
 	
+	private void createFakeIndex() throws IOException {
+		// TODO Auto-generated method stub
+		
+		List<ModelDescriptor> index = new ArrayList<ModelDescriptor>();
+		ModelDescriptor md1 = md("1","2");
+		ModelDescriptor md2 = md("3","4");
+		ModelDescriptor md3 = md("5","6");
+		Gson gson = new Gson();
+		String json = gson.toJson(index);
+		File tmp = tmpF.newFile("index.json");
+		try {
+			FileWriter writer = new FileWriter(tmp.getAbsolutePath());
+			writer.write(json);
+			writer.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		fakeIndex.setContent(tmp);
+		fakeIndex.setOk(true);
+		
+	}
+
 	private void setupResults() {
 		// TODO Auto-generated method stub
 		uploadSuccessful.setOk(true);
@@ -86,6 +123,18 @@ public class ClientAPITest {
 		
 		deleteSuccessful.setOk(true);
 		deleteSuccessful.setErrorMessage("deleteSuccessful!");
+		
+		
+	}
+	
+	private void SetupFileContent(ModelDescriptor downloadDesc) throws IOException
+	{
+		File file = getFileFor(downloadDesc);
+		file.createNewFile();
+		fileContent.setContent(file);
+		fileContent.setOk(true);
+		
+		
 	}
 
 	@Test
@@ -146,6 +195,7 @@ public class ClientAPITest {
 		//PrepareClient(BaseUrl, downDir);
 		List<ModelDescriptor> index = actualClient.getIndex();
 		for (ModelDescriptor md : index) {
+			SetupFileContent(md);
 			Result<File> output = actualClient.download(md);
 			actualClient.saveFile(md, output.getContent());
 		}
