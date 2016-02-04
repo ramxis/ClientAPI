@@ -1,5 +1,21 @@
 package kave;
-
+/**
+ * Copyright 2016 Technische Universität Darmstadt
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * Contributors:
+ *    - Muhammad Rameez
+ */
 import java.io.File;
 
 import com.sun.jersey.api.client.Client;
@@ -43,7 +59,7 @@ public class HttpUtils implements IHttpUtils {
 		WebResource webResource = client.resource(url);
 		response = webResource.type("application/x-www-form-urlencode").get(ClientResponse.class);
 		if (response.getStatus() != 200) {
-			throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+			res.setOk(false);
 		}
 		res.setContent(response.getEntity(File.class));
 		res.setOk(true);
@@ -59,7 +75,9 @@ public class HttpUtils implements IHttpUtils {
 		WebResource webResource = client.resource(url);
 		ClientResponse response = webResource.type("application/json").delete(ClientResponse.class, jsonString);
 		if (response.getStatus() != 200) {
-			throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+			res.setErrorMessage(response.getEntity(String.class));
+			res.setOk(false);
+			
 		}
 
 		String statusMessage = response.getEntity(String.class);
@@ -67,10 +85,7 @@ public class HttpUtils implements IHttpUtils {
 			res.setOk(true);
 			res.setErrorMessage(statusMessage);
 
-		} else {
-			res.setErrorMessage(statusMessage);
-			res.setOk(false);
-		}
+		} 
 		return res;
 	}
 

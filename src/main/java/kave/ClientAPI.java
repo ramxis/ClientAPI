@@ -1,3 +1,20 @@
+/**
+ * Copyright 2016 Technische Universität Darmstadt
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * Contributors:
+ *    - Muhammad Rameez
+ */
 package kave;
 
 import java.io.File;
@@ -41,9 +58,16 @@ public class ClientAPI<T> implements IClientAPI {
 		enforceFolders();
 	}
 
+	public ClientAPI(String uRL, File downDir, IHttpUtils http2) throws IOException {
+		// TODO Auto-generated constructor stub
+		this.baseUrl = baseUrl;
+		this.downloadFolder = downDir;
+		this.http = http2;
+		enforceFolders();
+	}
+
 	private void enforceFolders() throws IOException {
 		if (!downloadFolder.exists()) {
-			// File CustomFolder = new File("E:\\Github\\Upload\\");
 			FileUtils.forceMkdir(downloadFolder);
 		}
 	}
@@ -58,7 +82,7 @@ public class ClientAPI<T> implements IClientAPI {
 		if (response.isOk())
 			return response;
 		else
-			return response;
+			throw new RuntimeException("Failed : HTTP error code : " + response.getErrorMessage());
 
 	}
 
@@ -75,30 +99,18 @@ public class ClientAPI<T> implements IClientAPI {
 	private Result<File> downloadFile(String downloadURI, String fileName, String Version) throws IOException {
 
 		String downloadFile = fileName;
-
-		/*if (index) {
-			downloadFile = downloadFile + ".json";
-			fileContent =  (Result<File>) http.download(downloadURI + downloadFile);
-
-		} else {*/
-			downloadFile = downloadFile + "-" + Version + ".zip";
-			fileContent =  (Result<File>) http.download(downloadURI + downloadFile);
-
-		//}
-
-		//File file = fileContent.getContent();
-		//if (index)
-			//saveFile(file, downloadFile);
-		// saveFile(file, downloadFile);
-		return fileContent;
+		downloadFile = downloadFile + "-" + Version + ".zip";
+		fileContent =  (Result<File>) http.download(downloadURI + downloadFile);
+		if(fileContent.isOk())
+			return fileContent;
+		else
+			throw new RuntimeException("File not found");
 	}
 
 	private Result<String> UploadFile(String uploadURI, ModelDescriptor fileDescriptor, File file) throws IOException {
 
 		UploadObject testObject;
 		SerializeModel serializer = new SerializeModel();
-		// Client client = Client.create();
-		// WebResource webResource = client.resource(uploadURI);
 		FileInputStream fileInputStream = null;
 		byte[] bFile = new byte[(int) file.length()];
 		// convert file into array of bytes
