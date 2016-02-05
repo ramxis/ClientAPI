@@ -59,7 +59,7 @@ public class ClientAPITest {
 	private Result<String> deleteSuccessful;
 	private Result<File> fileContent;
 	private Result<File> fakeIndex;
-	private boolean mockHttp;
+	private boolean mockHttp,dontMock;
 	
 	
 	@Rule
@@ -82,6 +82,7 @@ public class ClientAPITest {
 		//downDir = new File("F:\\Github\\download\\");
 		initMocks(this);
 		mockHttp = true;
+		dontMock = false;
 		uploadSuccessful = new Result<String>();
 		deleteSuccessful = new Result<String>();
 		fileContent = new Result<File>();
@@ -108,6 +109,7 @@ public class ClientAPITest {
 	public void uploadNewFileJetty() throws IOException, JSONException {
 		
 		PrepareClient(BaseUrl, downDir,mockHttp);
+		//PrepareClient(BaseUrl, downDir,dontMock);
 		UploadObject umd = prepareUploadObject();
 		Result<String> result=actualClient.upload(umd.getModelDesc(),getFileFor(umd.getModelDesc()), OVERWRITE);
 		assertNewIndex(result);
@@ -120,7 +122,7 @@ public class ClientAPITest {
 	public void getIndexTest() throws IOException {
 		
 		PrepareClient(BaseUrl+Urltomcat, downDir,mockHttp);
-		//PrepareClient(BaseUrl, downDir,mockHttp);
+		//PrepareClient(BaseUrl+Urltomcat, downDir,dontMock);
 		actualClient.getIndex();
 		File indexFile = new File(downDir+"\\index.json");
 		assertTrue(indexFile.exists());
@@ -131,6 +133,7 @@ public class ClientAPITest {
 	public void uploadNewFileTomcat() throws IOException, JSONException {
 		
 		PrepareClient(BaseUrl+Urltomcat, downDir,mockHttp);
+		//PrepareClient(BaseUrl+Urltomcat, downDir,false);
 		UploadObject umd = prepareUploadObject();
 		Result<String> result = actualClient.upload(umd.getModelDesc(),getFileFor(umd.getModelDesc()), OVERWRITE);
 		assertNewIndex(result);
@@ -141,8 +144,8 @@ public class ClientAPITest {
 	@Test(expected=IOException.class)
 	public void uploadDuplicateFile() throws IOException, JSONException {
 		
-		PrepareClient(BaseUrl, downDir,mockHttp);
-		//PrepareClient(BaseUrl+Urltomcat, downDir,mockHttp);
+		PrepareClient(BaseUrl+Urltomcat, downDir,mockHttp);
+		//PrepareClient(BaseUrl+Urltomcat, downDir,dontMock);
 		UploadObject umd = prepareUploadObject();
 		actualClient.upload(umd.getModelDesc(),getFileFor(umd.getModelDesc()), OVERWRITE);
 		SetupExceptions();
@@ -155,7 +158,7 @@ public class ClientAPITest {
 	public void downLoadAllFilesTomcat() throws IOException {
 		
 		PrepareClient(BaseUrl+Urltomcat, downDir,mockHttp);
-		//PrepareClient(BaseUrl, downDir,mockHttp);
+		//PrepareClient(BaseUrl+Urltomcat, downDir,dontMock);
 		List<ModelDescriptor> index = actualClient.getIndex();
 		for (ModelDescriptor md : index) {
 			SetupFileContent(md);
@@ -172,6 +175,7 @@ public class ClientAPITest {
 	public void downLoadSingleFileTomcat() throws IOException {
 		
 		PrepareClient(BaseUrl+Urltomcat, downDir,mockHttp);
+		//PrepareClient(BaseUrl+Urltomcat, downDir,dontMock);
 		List<ModelDescriptor> index = actualClient.getIndex();//make sure server has index
 		//get initial server index:making sure client has an index
 		//for comparison
@@ -192,6 +196,7 @@ public class ClientAPITest {
 	public void downLoadNonExistingFileTomcat() throws IOException {
 		
 		PrepareClient(BaseUrl+Urltomcat, downDir,mockHttp);
+		//PrepareClient(BaseUrl+Urltomcat, downDir,dontMock);
 		List<ModelDescriptor> index = actualClient.getIndex();
 		ModelDescriptor umd = md("dummyFile", "doesNotExist2");
 		
@@ -207,8 +212,9 @@ public class ClientAPITest {
 	@Test
 	public void deleteFile() throws IOException {
 		
-		//PrepareClient(BaseUrl+Urltomcat, downDir,mockHttp);
-		PrepareClient(BaseUrl, downDir,mockHttp);
+		PrepareClient(BaseUrl+Urltomcat, downDir,mockHttp);
+		//PrepareClient(BaseUrl+Urltomcat, downDir,dontMock);
+		//PrepareClient(BaseUrl, downDir,mockHttp);
 		ModelDescriptor umd = md("1", "2");
 	    // make sure the file exists on server:move a new file in place on server & update server index
 		Result<String> response = actualClient.delete(umd);
@@ -219,8 +225,9 @@ public class ClientAPITest {
 	@Test(expected=RuntimeException.class)
 	public void deleteNonExistingFile() throws IOException {
 		
-		//PrepareClient(BaseUrl+Urltomcat, downDir,mockHttp);
-		PrepareClient(BaseUrl, downDir, mockHttp);
+		PrepareClient(BaseUrl+Urltomcat, downDir,mockHttp);
+		//PrepareClient(BaseUrl+Urltomcat, downDir,dontMock);
+		//PrepareClient(BaseUrl, downDir, mockHttp);
 		ModelDescriptor umd = md("dummy", "2"); // file should not exist on server
 		SetupExceptions();
 		Result<String> response = actualClient.delete(umd);

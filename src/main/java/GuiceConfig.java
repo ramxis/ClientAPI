@@ -50,7 +50,7 @@ public class GuiceConfig extends GuiceServletContextListener {
 			protected void configureServlets() {
 
 				//dataDir = getPath("data");//for production comment in
-				dataDir = new File("E:\\Github\\Upload");//comment out
+				dataDir = new File("F:\\Github\\Upload");//comment out
 				tmpDir = getPath("tmp");
 
 				dataDir.mkdir();
@@ -79,7 +79,7 @@ public class GuiceConfig extends GuiceServletContextListener {
 
 			@Provides
 			public IoUtils provideUploadCleanser() {
-				return new IoUtils(tmpDir,dataDir,"E:\\Github\\Upload\\");
+				return new IoUtils(tmpDir,dataDir,dataDir.getAbsolutePath());
 			}
 			@Provides
 			public ModelService provideFeedbackService(IoUtils io) throws IOException {

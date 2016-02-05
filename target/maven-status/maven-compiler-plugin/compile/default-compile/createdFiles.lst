@@ -12,9 +12,11 @@ kave\ClientAPI.class
 kave\SerializeModel.class
 kave\ModelDescriptor.class
 kave\IoUtils$1.class
+GuiceConfig.class
 kave\UploadObject.class
 kave\Deserializer.class
 kave\EmbeddedServer.class
 kave\HttpUtils.class
 kave\IDeserializer.class
 kave\GuiceConfig$1.class
+GuiceConfig$1.class
