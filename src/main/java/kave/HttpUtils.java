@@ -1,6 +1,5 @@
-package kave;
 /**
- * Copyright 2016 Technische Universität Darmstadt
+ * Copyright 2016 Muhammad Rameez
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +12,16 @@ package kave;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * Contributors:
- *    - Muhammad Rameez
  */
+package kave;
+
 import java.io.File;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
-public class HttpUtils implements IHttpUtils {
-
-	
+public class HttpUtils implements IHttpUtils<File> {
 
 	@Override
 	public Result<String> upload(String jsonString, String url) {
@@ -77,7 +74,7 @@ public class HttpUtils implements IHttpUtils {
 		if (response.getStatus() != 200) {
 			res.setErrorMessage(response.getEntity(String.class));
 			res.setOk(false);
-			
+
 		}
 
 		String statusMessage = response.getEntity(String.class);
@@ -85,13 +82,12 @@ public class HttpUtils implements IHttpUtils {
 			res.setOk(true);
 			res.setErrorMessage(statusMessage);
 
-		} 
+		}
 		return res;
 	}
 
 	@Override
 	public Result<File> getIndex(String url) {
-		// TODO Auto-generated method stub
 		Result<File> res = new Result<File>();
 		ClientResponse response;
 		Client client = Client.create();
@@ -103,7 +99,7 @@ public class HttpUtils implements IHttpUtils {
 		res.setContent(response.getEntity(File.class));
 		res.setOk(true);
 		return res;
-		
+
 	}
 
 }
